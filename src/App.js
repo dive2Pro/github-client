@@ -1,9 +1,12 @@
 import React, { Component, useEffect } from "react";
 import "./App.css";
+import {authenticate} from './request'
 
 // TODO get from server
 const CLIENT_ID = "e4fc9e72fbe8f05e277c";
+const CLIENT_SECRET = '79d62014bded613e11df23ec0669b08c8904242b'
 const REDIRECT_URI = "http://localhost:3000/github/callback";
+
 function GithubLogin(props) {
   function openPopup(url) {
     const w = 650;
@@ -11,7 +14,7 @@ function GithubLogin(props) {
     const left = window.screen.width / 2 - w / 2;
     const top = window.screen.height / 2 - h / 2;
 
-    
+
     return window.open(
       "",
       "",
@@ -31,20 +34,16 @@ function GithubLogin(props) {
         popup.close();
       };
 
-
       try {
         if (
           // !popup.location.hostname.includes("github") &&
           // !popup.location.hostname == ""
-          popup.location.hostname.includes("code=")
+          popup.location.href.includes("code=")
         ) {
-
           if (popup.location.search) {
             const query = new URLSearchParams(popup.location.search);
-
-            const oauthToken = query.get("oauth_token");
-            const oauthVerifier = query.get("oauth_verifier");
-            console.log(query);
+            const code = query.get("code");
+            props.onSuccess(code)
             closeDialog();
           } else {
             closeDialog();
@@ -67,7 +66,7 @@ function GithubLogin(props) {
   function onClick(e) {
     e.preventDefault()
       console.log('e')
-    const url = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}`;
+    const url = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&scope=user&repo`;
     const popup = openPopup();
     popup.location = url;
     polling(popup);
@@ -91,11 +90,16 @@ function GithubLogin(props) {
 }
 
 class App extends Component {
+
+  onSuccess = code => {
+    authenticate(code)
+  }
+
   render() {
     return (
       <div className="App">
         {/*<img src={logo} className="App-logo" alt="logo" />*/}
-        <GithubLogin />
+        <GithubLogin onSuccess={this.onSuccess} />
       </div>
     );
   }
