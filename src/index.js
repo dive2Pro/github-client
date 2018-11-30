@@ -5,6 +5,8 @@ import './index.css';
 import * as serviceWorker from './serviceWorker';
 const App = lazy(() => import ('./App'));
 const Callback = lazy(() => import ('./Callback'));
+const User = lazy(() => import ('./User'));
+const ServerError = lazy(() => import ('./ServerError'));
 
 const Application = () => {
     return <BrowserRouter>
@@ -12,6 +14,7 @@ const Application = () => {
             <Switch>
                 <Route exact path={'/'} component={App} />
                 <Route path={'/callback'} component={Callback} />
+                <Route path={'/user'} component={User} />
             </Switch>
         </Suspense>
     </BrowserRouter>
