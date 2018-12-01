@@ -1,25 +1,29 @@
-import React, { useEffect, useState } from 'react'
-import {trending} from './request'
+import React, { useEffect, useState } from "react";
+import { trending } from "./request";
 
 export default function User() {
-    const [ repos , setTrending]  = useState([])
-    const [params, setParams] = useState({})
-    useEffect(() => {
-        async function searchTrending() {
-            const result = await trending(params).then(res => {
-                console.log(res)
-                return  res
-            })
+  const [repos, setTrending] = useState([]);
+  const [params, setParams] = useState({});
 
-            // setTrending(result)
-        }
-        searchTrending()
-    })
-    return <div>
-            <ul>
-                {
-                    repos.map( r => <li key={r.name}> {r.name} </li>)
-                }
-            </ul>
-        </div>
+  useEffect(
+    () => {
+      searchTrending();
+    },
+    [params]
+  );
+
+  async function searchTrending() {
+    const result = await trending();
+    setTrending(result);
+  }
+  return (
+    <div>
+      <button onClick={() => searchTrending()}>Query</button>
+      <ul>
+        {repos.map(r => (
+          <li key={r.name}> {r.name} </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
